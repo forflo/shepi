@@ -44,6 +44,10 @@ I like this idea. However, there are some caveats:
 Lua-shepi uses the package lua-posix and thus is capable of dealing
 with *real* pipes. Here are some highlights:
 
+- The EDSL uses the same left-to-right evaluation order and
+  the pipe character `|` that you are familiar with. For instance
+  `local pipe = bp.echo('foo bar') | bp.tr('-d', ' ')` becomes
+  possible (see the examples further below).
 - There are no tempfiles.
 - Space complexity for normal shepi pipes is
   constant (not taking into account the
@@ -51,7 +55,7 @@ with *real* pipes. Here are some highlights:
 - If you are using the `shepi.fork` function,
   space complexity is `O(n) = n`, because
   it synchronuously joins the subpipes in order.
-  (`n` referes to the number of subpipes.)
+  (`n` referes to the data input from the subpipes.)
 - You can throw lua functions into the pipe.
   They also do run in a separate process!
 - You can reuse your pipes, since they are just
@@ -189,7 +193,7 @@ foo
 
 Which means it is \*starts scary voice\* non-deterministic!
 
-In lua-shepi I chose a deterministic mode of operation, because
+In lua-shepi, I chose a deterministic mode of operation, because
 most of the time when I did something like the `tee` hack with
 process substitution, I *cared* about the order and had to
 resort to lock files or temp files in order to "synchronize" the
