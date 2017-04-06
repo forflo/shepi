@@ -12,19 +12,20 @@ a lua file object from which one can read the output of the
 process. This neat function and lua's expresiveness (metatables y0!)
 make something like `cmd.cat(cmd.ls('-lah'))` possible.
 
-Serge Zaitsev wrote an [article]() on his blog describing
+Serge Zaitsev wrote an [article](http://zserge.com/blog/luash.html)
+on his blog describing
 a tiny lua library that implements the `cmd1(cmd2('param'))` abstraction.
 
 I like this idea. However, there are some caveats:
 
-1. Due to the limitation on popen, the library uses tempfiles for each
+1. Due to the limitation on `popen`, the library uses tempfiles for each
    process started.
-2. For the same reason, and because of lua's synchronity, one command at
-   a time is being executed (resulting in one tempfile each).
+2. For the same reason, and because of lua's synchronicity, only one command
+   is being executed at a time (resulting in one tempfile each).
 3. If you have something like `ls | cat -n | sed -e 's/foo/bar/'` and
-   translate it to his lua syntax, you will end up with
-   `ls(cat(sed('-e', 's/foo/bar/'), '-n'))`; which is hardly more readable.
-   Although the author claims that in his article.
+   translate it to his lua-sh syntax, you will end up with
+   `ls(cat(sed('-e', 's/foo/bar/'), '-n'))`; which is hardly more readable
+   (despite the fact that the author claims that in his article).
    Not only is it not more readable, it is also more difficult to modify,
    especially when you have to add a parameter to a command in the pipeline
    where there was none before. Imagine you would want to add the parameter
@@ -41,19 +42,20 @@ I like this idea. However, there are some caveats:
 ## Solution
 
 Lua-shepi uses the package lua-posix and thus is capable of dealing
-with *real* pipes. Here are some highlights
+with *real* pipes. Here are some highlights:
 
-- There are no tempfiles
+- There are no tempfiles.
 - Space complexity for normal shepi pipes is
   constant (not taking into account the
   commands in the pipeline of course).
-- If you are using the shepi.fork function,
+- If you are using the `shepi.fork` function,
   space complexity is `O(n) = n`, because
   it synchronuously joins the subpipes in order.
+  (`n` referes to the number of subpipes.)
 - You can throw lua functions into the pipe.
-  The also do run in a separate process!
+  They also do run in a separate process!
 - You can reuse your pipes, since they are just
-  regular lua-functions
+  regular lua-functions.
 - And, of course, there won't be zombie processes
   (but that's not really a hightlight).
 
@@ -65,7 +67,7 @@ Now, without further ado, let me show you some actual use cases
 ```lua
 local bp = require("lua-shepi")
 
-local ls = bp.ls()
+local ls = bp.ls('-la')
 local echo = bp.echo()
 local bash = bp.bash()
 print(ls())                  -- prints files from pwd
@@ -185,7 +187,7 @@ foo
      1	foo
 ```
 
-Which means it is **scary voice** non-deterministic!
+Which means it is \*starts scary voice\* non-deterministic!
 
 In lua-shepi I chose a deterministic mode of operation, because
 most of the time when I did something like the `tee` hack with
