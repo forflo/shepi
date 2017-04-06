@@ -93,16 +93,20 @@ setmetatable(pipeDsl, pdslMtab)
 bp = pipeDsl
 
 --print(bp.cat()("foobar"))
---print((bp.ls("-la") | bp.cat("-n") | bp.sed('-e', 's/9/goo/g') | bp.cat('-n'))())
---
---local function cmap(sin, sout, serr)
---    local char = sin:read(1)
---    while char do
---        sout:write(char .. char)
---        char = sin:read(1)
---    end
---end
---print((bp.echo('-n', 'A test Message') | bp.fun(cmap))())
+local p1 = (bp.ls("-a") | bp.cat("-n") | bp.sed('-e', 's/9/goo/g') | bp.cat('-n'))
+local p2 = p1 | bp.cat('-n')
+print(bp.ls('-a')())
+print(p1())
+print(p2())
+
+local function cmap(sin, sout, serr)
+    local char = sin:read(1)
+    while char do
+        sout:write(char .. char)
+        char = sin:read(1)
+    end
+end
+print((bp.echo('-n', 'A test Message') | bp.fun(cmap))())
 --print((bp.ls() | bp.forkRev(bp.cat('-n')) | bp.cat())())
 
 
@@ -115,7 +119,7 @@ local function hline(len, char)
 end
 
 pipe =
-    bp.ls('-lah') |
+    bp.ls('-lh') |
     bp.fun(hline(20, '-')) |
     bp.fork(
         bp.cat('-n'),
@@ -125,11 +129,26 @@ pipe =
                 bp.cat('-n'),
                 bp.cat('-n') | bp.tac()))
 
-for i = 1, 20 do
-    print(pipe())
-    print(pipe())
-end
+print(pipe())
+--posix.sleep(30)
+print('--------------------------------')
+local simplePipe0 = bp.ls'-a' | bp.cat'-n'
 
-posix.sleep(30)
+local simplePipe1 =
+    simplePipe0 |
+    bp.sed('-e', 's/4/four/g') |
+    bp.cat'-n'
+
+local simplePipe2 = simplePipe1 | bp.cat'-n'
+
+local get4th = bp.head'-n4' | bp.tail'-n1'
+
+local p1 = simplePipe0 | get4th
+local p2 = simplePipe1 | get4th
+local p3 = simplePipe2 | get4th
+
+print(p1())
+print(p2())
+print(p3())
 
 return pipeDsl
