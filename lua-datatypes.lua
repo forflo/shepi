@@ -1,5 +1,5 @@
+--local dbg = require"debugger"
 local posix = require("posix")
-local dbg = require"debugger"
 local datatypes = {}
 
 -- "fat enums"
@@ -77,7 +77,6 @@ function datatypes.SyncFork(...)
                     writeTf:close()
                     local outFd, errFd, pid = pipe(read)
                     pipe:waitPids()
---                    posix.close(read)
                     local errFdTf = posix.fdopen(errFd, "r")
                     local outFdTf = posix.fdopen(outFd, "r")
                     stdout:write(outFdTf:read("a"))
@@ -131,8 +130,8 @@ function datatypes.Command(program, ...)
     function t:getArguments() return self._arguments end
     function t:getProgram() return self._program end
     function t:execute(argfd)
-        local out, err, pid = pipeopen(argfd, self:getProgram(),
-                                       table.unpack(self:getArguments()))
+        local out, err, pid = pipeopen(
+            argfd, self:getProgram(), table.unpack(self:getArguments()))
         self:setPid(pid)
         return out, err, pid
     end

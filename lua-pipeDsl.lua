@@ -1,14 +1,8 @@
+--local dbg = require("debugger")
 local posix = require("posix")
 local ds = require("lua-datatypes")
-local dbg = require("debugger")
 local pipeDsl = {}
 
---local pipe =
---    bp.ls("-la", "--foo") |
---    bp.fork(bp.cmd("bar", "--long") | bp.cmd("tr", "'g'", "'f'"),
---            bp.cmd("fnord") | bp.cmd("cat")) |
---    bp.cmd("cat");
---local result = pipe("foo")
 local function tableReverse(tab)
     local result = {}
     for i = #tab, 1, -1 do
@@ -89,5 +83,4 @@ pdslMtab.__index = function(tbl, key)
 end
 
 setmetatable(pipeDsl, pdslMtab)
-
 return pipeDsl
