@@ -251,3 +251,18 @@ If run in a directory with only two files, the output :
      2	total ??K
      1	--------------------
 ```
+
+## Tests
+
+All of the examples in the previous chapter, were coded into
+a unit tests and put into the `tests` directory (relative to the
+root of the repository). The test uses the lua test framework
+[busted](https://github.com/Olivine-Labs/busted) and can be
+executed using the following command line:
+
+```bash
+busted -lpath "./source/?.lua" --pattern "spec" tests/
+```
+
+Note, that this command must be issued from within the repository
+root.
