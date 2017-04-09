@@ -2,7 +2,8 @@
 ## Why and What
 
 Lua-shepi provides an embedded domain specific language
-for the creation of shell pipes.
+for the creation of shell pipes. You can download it 
+from [luarocks](https://luarocks.org/modules/forflo/lua-shepi).
 
 Lua, by itself, only provides the function `popen` which
 takes as much arguments as you want, and then executes
