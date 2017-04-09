@@ -227,7 +227,7 @@ pipe =
 print(pipe())
 ```
 
-If run in a directory with only two files, the output :
+If run in a directory with only two files, the output would look like:
 
 ```
      1	--------------------
