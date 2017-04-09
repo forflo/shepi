@@ -82,5 +82,9 @@ pdslMtab.__index = function(tbl, key)
     end
 end
 
+pdslMtab.__call = function(callee, program, ...)
+    return pipeDsl.cmd(program, ...)
+end
+
 setmetatable(pipeDsl, pdslMtab)
 return pipeDsl
